@@ -5,7 +5,7 @@ const { chromium } = require('playwright');
     var context = await browser.newContext();
     var page = await context.newPage();
 
-    // INFO: your url
+    // TODO: set url
     var url = '';
 
     try {
