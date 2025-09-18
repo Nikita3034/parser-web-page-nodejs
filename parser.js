@@ -5,46 +5,28 @@ const { chromium } = require('playwright');
     var context = await browser.newContext();
     var page = await context.newPage();
 
-    var url = ''; // TODO: set your url
-    var results = [];
-    var links = [];
+    // INFO: your url
+    var url = '';
 
-    for (let i = 1; i < 4; i++) {
-        await page.goto(url + '?page=' + i, { waitUntil: 'load' });
+    try {
+        // INFO: load page
+        await page.goto(url, { waitUntil: 'load' });
+
+        // INFO: waiting some time
         await page.waitForTimeout(2000);
-        const linksAgents = await page.$$eval('a.el-agent__more', links => links.map(link => link.href));
-        links = links.concat(linksAgents)
+
+        // INFO: clicking on some button
+        await page.click(''); // #id / .class / some attribute
+
+        // INFO: waiting for element on page
+        await page.waitForSelector(''); // #id / .class / some attribute
+
+        // INFO: getting text from one element
+        let element = await page.$eval('', el => el.textContent); // #id / .class / some attribute
+
+        // INFO: getting text from multiple elements
+        let elements = await page.$$eval('', els => els.map(el => el.textContent)); // #id / .class / some attribute
+    } catch (error) {
+        console.error(`Error ${link}:`, error);
     }
-
-    await browser.close();
-
-    browser = await chromium.launch();
-    context = await browser.newContext();
-    page = await context.newPage();
-
-    for (let link of links) {
-        try {
-            await page.goto(link, { waitUntil: 'load', timeout: 10000 });
-            await page.waitForTimeout(2000);
-            await page.click('.ag-char__phones-toggle');
-
-            await page.waitForSelector('.ag-char__phones');
-
-            const content = await page.$$eval('.ag-char__phones a', item => item.map(item => item.textContent));
-
-            const fio = await page.$eval('.ag-char__name', el => el.textContent);
-
-            results.push({
-                'fio': fio,
-                'phone': content[0],
-                'email': content[1]
-            });
-        } catch (error) {
-            console.error(`Error ${link}:`, error);
-        }
-    }
-
-    console.log(results);
-
-    await browser.close();
 })();
